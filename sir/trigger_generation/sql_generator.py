@@ -28,9 +28,6 @@ class TriggerGenerator(object):
     # (`update`, `delete`, or `index`)
     routing_key = None
 
-    #: The sir_message table name
-    sir_table_name = 'sir_message'
-
     def __init__(self, table_name, pk_columns, fk_columns, **kwargs):
         """
         :param str table_name: The table on which to generate the trigger.
