@@ -27,7 +27,10 @@ class TriggerGenerator(object):
     # The routing key to be used for the message sent via AMQP
     # (`update`, `delete`, or `index`)
     routing_key = None
-    
+
+    #: The sir_message table name
+    sir_table_name = 'sir_message'
+
     def __init__(self, table_name, pk_columns, fk_columns, **kwargs):
         """
         :param str table_name: The table on which to generate the trigger.
@@ -249,21 +252,21 @@ class SirMessageTableGenerator(object):
             schema=SIR_SCHEMA,
             message_table_name=SIR_MESSAGE_TABLE_NAME
         )
-    
-    
+
+
 class InsertAMQPTriggerGenerator(object):
     """
     A trigger generator for AMQP operations.
     """
     #: The operation
     op = 'INSERT'
-    
+
     def __init__(self, broker_id=1, **kwargs):
         """
         :param int broker_id: ID of the AMQP broker row in a database.
         """
         self.broker_id = broker_id
-    
+
     def trigger(self):
         """
         The ``CREATE TRIGGER`` statement for this trigger.

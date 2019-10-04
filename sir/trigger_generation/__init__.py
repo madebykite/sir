@@ -49,7 +49,7 @@ def generate(trigger_filename, function_filename, create_sir_message_table_filen
                  ("search.index" queue for "search.index" messages, "search.delete" queue
                  for "search.delete" messages)
 
-        4. Write generated triggers into SQL scripts to be run on the MusicBrainz database
+        5. Write generated triggers into SQL scripts to be run on the MusicBrainz database
 
     Since table might have multiple primary keys, we need to explicitly specify their row names and values.
     """
@@ -62,7 +62,6 @@ def generate(trigger_filename, function_filename, create_sir_message_table_filen
         # Write mbdata tables' triggers and functions
         write_header(triggerfile)
         write_header(functionfile)
-
         for table_name, table_info in get_trigger_tables().items():
             write_triggers(
                 trigger_file=triggerfile,
@@ -73,6 +72,24 @@ def generate(trigger_filename, function_filename, create_sir_message_table_filen
             )
         write_footer(triggerfile)
         write_footer(functionfile)
+
+        # Write create message table SQL
+        write_header(create_sir_message_tablefile)
+        write_create_sir_message_table(
+            message_table_file=create_sir_message_tablefile
+        )
+        write_footer(create_sir_message_tablefile)
+
+        # Write AMQP trigger and function
+        write_header(amqp_triggerfile)
+        write_header(amqp_functionfile)
+        write_amqp_triggers(
+            amqp_trigger_file=amqp_triggerfile,
+            amqp_function_file=amqp_functionfile,
+            broker_id=broker_id,
+        )
+        write_footer(amqp_triggerfile)
+        write_footer(amqp_functionfile)
 
         # Write create message table SQL
         write_header(create_sir_message_tablefile)
