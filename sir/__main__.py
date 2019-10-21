@@ -8,6 +8,7 @@ import configparser
 from . import config, init_sentry_sdk
 from .amqp.extension_generation import generate_extension
 from .amqp.handler import watch
+from .amqp.publisher import publish
 from .amqp.setup import setup_rabbitmq
 from .indexing import reindex
 from .schema import SCHEMA
@@ -91,6 +92,10 @@ def main():
                                    choices=SCHEMA.keys())
 
     amqp_watch_parser.set_defaults(func=watch)
+    
+    amqp_publish_parser = subparsers.add_parser("amqp_publish",
+                                              help="Publish SIR messages to AMQP queues")
+    amqp_publish_parser.set_defaults(func=publish)
 
     args = parser.parse_args()
     if args.debug:
