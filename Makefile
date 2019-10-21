@@ -19,6 +19,10 @@ installsql:
 	$(MB_SERVER_PATH)/admin/psql -f sql/CreateFunctions.sql
 	$(MB_SERVER_PATH)/admin/psql -f sql/CreateTriggers.sql
 
+installampqsql:]
+	$(MB_SERVER_PATH)/admin/psql -f sql/CreateAMQPFunction.sql
+	$(MB_SERVER_PATH)/admin/psql -f sql/CreateAMQPTrigger.sql
+
 installampqsql:
 	$(MB_SERVER_PATH)/admin/psql -f sql/CreateAMQPFunction.sql
 	$(MB_SERVER_PATH)/admin/psql -f sql/CreateAMQPTrigger.sql
@@ -31,4 +35,3 @@ dropsql:
 dropampqsql:
 	$(MB_SERVER_PATH)/admin/psql -f sql/DropAMQPTrigger.sql
 	$(MB_SERVER_PATH)/admin/psql -f sql/DropAMQPFunction.sql
-	
