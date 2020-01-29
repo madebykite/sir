@@ -113,7 +113,7 @@ def callback_wrapper(f):
     @wraps(f)
     def wrapper(self, msg, queue):
         try:
-            logger.debug("Received message from queue %s: %s" % (queue, msg.body))
+            logger.info("Received message from queue %s: %s" % (queue, msg.body))
             parsed_message = message.Message.from_amqp_message(queue, msg)
             if parsed_message.table_name == 'artist_credit' and parsed_message.columns['id'] == 1:
                 raise INDEX_LIMIT_EXCEEDED('artist_credit', self.index_limit, None)
