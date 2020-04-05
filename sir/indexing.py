@@ -294,37 +294,24 @@ def queue_to_solr(queue, batch_size, solr_connection):
 
     data = []
     count = 0
-    logger.error('%d: Entering queue processing loop', multiprocessing.current_process().pid)
     while True:
-        logger.error('%d: Getting queued item for delivery to Solr', multiprocessing.current_process().pid)
         item = queue.get()
-        logger.error('%d: Got queued item for delivery to Solr', multiprocessing.current_process().pid)
-        if not PROCESS_FLAG.value:
-            logger.error('%d: PROCESS_FLAG.value is false', multiprocessing.current_process().pid)
-            break
-        if item is STOP:
-            logger.error('%d: Encountered STOP, probably because the queue is empty', multiprocessing.current_process().pid)
+        if not PROCESS_FLAG.value or item is STOP:
             break
         data.append(item)
         if len(data) >= batch_size:
-            logger.error("%d: Sending to Solr %d new documents for a batch size of %d", multiprocessing.current_process().pid, len(data), batch_size)
             send_data_to_solr(solr_connection, data)
             count += len(data)
             logger.debug("Sent %d new documents. Total: %d", len(data), count)
             data = []
 
-    logger.error('%d: STOPping queue', multiprocessing.current_process().pid)
     queue.put(STOP)
     if not PROCESS_FLAG.value:
-        logger.error('%d: Bailing on sending and committing to Solr', multiprocessing.current_process().pid)
         return
-    logger.error("%d: Sending to Solr %d remaining new documents", multiprocessing.current_process().pid, len(data))
     logger.debug("%s: Sending remaining data & stopping", solr_connection)
     send_data_to_solr(solr_connection, data)
-    logger.error("%d: Committing changes to Solr", multiprocessing.current_process().pid)
-    logger.debug("%d: Committing changes to Solr", multiprocessing.current_process().pid)
+    logger.debug("Committing changes to Solr")
     solr_connection.commit()
-    logger.error("%d: Solr commit complete", multiprocessing.current_process().pid)
 
 
 def send_data_to_solr(solr_connection, data):
@@ -339,7 +326,6 @@ def send_data_to_solr(solr_connection, data):
         solr_connection.add(data)
         logger.debug("Done sending data to Solr")
     except SolrError:
-        logger.error("%d: Sending data to Solr failed", multiprocessing.current_process().pid)
         get_sentry().captureException(extra={"data": data})
         FAILED.value = True
     else:
