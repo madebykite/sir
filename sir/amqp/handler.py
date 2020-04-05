@@ -353,7 +353,7 @@ class Handler(object):
                         continue
                     else:
                         logger.debug("SQL: %s" % select_query)
-                        ids = [row[0] for row in session.execute(select_query).fetchall()]
+                        ids = [row[0] for row in select_query.with_session(session).yield_per(10000)]
 
                 # Retrieving actual data
                 extra_data = {'table_name': parsed_message.table_name,
@@ -403,8 +403,8 @@ class Handler(object):
                         if select_query is None:
                             logger.warning("SELECT is `None`")
                             continue
-                        ids = [row[0] for row in session.execute(select_query).fetchall()]
                         logger.debug("SQL: %s" % (select_query))
+                        ids = [row[0] for row in select_query.with_session(session).yield_per(10000)]
 
                     # Retrieving actual data
                     extra_data = {'table_name': parsed_message.table_name,
