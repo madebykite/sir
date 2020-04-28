@@ -64,6 +64,7 @@ class TriggerGenerator(object):
 
         :rtype: str
         """
+
         return textwrap.dedent("""\
             CREATE OR REPLACE FUNCTION {trigger_name}() RETURNS trigger
                 AS $$
@@ -183,6 +184,44 @@ class UpdateTriggerGenerator(TriggerGenerator):
             op=operation,
             before_or_after=self.before_or_after.upper(),
             when=when
+        )
+
+    def function(self):
+        """
+        The ``CREATE FUNCTION`` statement for this trigger.
+
+        https://www.postgresql.org/docs/9.0/static/plpgsql-structure.html
+
+        :rtype: str
+        """
+        update_condition = ""
+        end_update_condition = ""
+        # Consider FK columns in update triggers to make sure triggers are fired
+        # in case any FK of related tables are changed
+        if self.update_columns:
+            all_columns = set(self.fk_columns + list(self.update_columns))
+            update_condition = "IF %s THEN" % " OR ".join([("OLD.%s <> NEW.%s" % (column, column)) for column in sorted(all_columns)])
+            end_update_condition = "END IF;"
+
+        return textwrap.dedent("""\
+            CREATE OR REPLACE FUNCTION {trigger_name}() RETURNS trigger
+                AS $$
+            BEGIN
+                {update_condition}
+                    INSERT INTO {schema}.{table_name} (exchange, routing_key, message) VALUES ('search', '{routing_key}', ({message}));
+                {end_update_condition}
+                RETURN {return_value};
+            END;
+            $$ LANGUAGE plpgsql;\n
+        """).format(
+            schema=SIR_SCHEMA,
+            table_name=SIR_MESSAGE_TABLE_NAME,
+            trigger_name=self.trigger_name,
+            routing_key=self.routing_key,
+            message=self.message,
+            return_value=self.record_variable,
+            update_condition=update_condition,
+            end_update_condition=end_update_condition
         )
 
 
