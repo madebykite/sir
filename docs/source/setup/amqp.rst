@@ -105,26 +105,4 @@ These can be found in the ``sql`` directory and can be installed with
 
 where ``<mb_path>`` is the path to your clone of the MusicBrainz server.
 
-Method 2: SIR Message Table & Publisher Process
-+++++++++++++++++++++++++++++++++++++++++++++++
-
-If you cannot install the ``pg_amqp`` extension on your PostgreSQL instance you should
-take this approach. It will create a ``sir.message`` database table that SIR messages
-will be persisted to via triggers. It will be necessary to run the separate
-``amqp_publish`` process, which will fetch messages from the database, publish them to
-RabbitMQ and finally remove them from the ``sir.message`` database table. Assuming that
-you have this process running, the ``sir.message`` table should normally be empty, or
-have a small number of records.
-
-Triggers
-""""""""
-
-These can be found in the ``sql`` directory and can be installed with
-
-.. code-block:: shell
-
-     MB_SERVER_PATH=<mb_path> make installsql
-
-where ``<mb_path>`` is the path to your clone of the MusicBrainz server.
-
 .. _the RabbitMQ documentation: https://www.rabbitmq.com/configure.html

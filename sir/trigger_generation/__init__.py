@@ -26,7 +26,7 @@ def generate_func(args):
 
 
 def generate(trigger_filename, function_filename, create_sir_message_table_filename,
-             amqp_trigger_filename, amqp_function_filename, broker_id):
+             amqp_trigger_filename, amqp_function_filename, broker_id, entities):
     """Generates SQL queries that create and remove triggers for the MusicBrainz database.
 
     Generation works in the following way:
@@ -62,7 +62,7 @@ def generate(trigger_filename, function_filename, create_sir_message_table_filen
         # Write mbdata tables' triggers and functions
         write_header(triggerfile)
         write_header(functionfile)
-        for table_name, table_info in get_trigger_tables().items():
+        for table_name, table_info in get_trigger_tables(entities).items():
             write_triggers(
                 trigger_file=triggerfile,
                 function_file=functionfile,

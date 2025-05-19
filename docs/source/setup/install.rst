@@ -31,9 +31,10 @@ The easiest way to run sir at the moment is to use a `virtual environment
 <http://www.virtualenv.org/en/latest/>`_. Once you have virtualenv for Python
 3.13 installed, use the following to create the environment::
 
-    virtualenv venv
-    source venv/bin/activate
-    pip install -r requirements.txt
+    python3 -m venv .venv
+    source .venv/bin/activate
+    env LDFLAGS="-I/opt/homebrew/opt/openssl/include -L/opt/homebrew/opt/openssl/lib" pip3 install -r requirements.txt
+    pip3 install -r requirements_dev.txt
     cp config.ini.example config.ini
 
 Note: Environment variables can be used in `config.ini` with the syntaxes
@@ -43,4 +44,4 @@ Escaping is not supported.
 
 You can now use sir via::
 
-    python -m sir
+    python3 -m sir
