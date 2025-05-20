@@ -91,24 +91,6 @@ def generate(trigger_filename, function_filename, create_sir_message_table_filen
         write_footer(amqp_triggerfile)
         write_footer(amqp_functionfile)
 
-        # Write create message table SQL
-        write_header(create_sir_message_tablefile)
-        write_create_sir_message_table(
-            message_table_file=create_sir_message_tablefile
-        )
-        write_footer(create_sir_message_tablefile)
-
-        # Write AMQP trigger and function
-        write_header(amqp_triggerfile)
-        write_header(amqp_functionfile)
-        write_amqp_triggers(
-            amqp_trigger_file=amqp_triggerfile,
-            amqp_function_file=amqp_functionfile,
-            broker_id=broker_id,
-        )
-        write_footer(amqp_triggerfile)
-        write_footer(amqp_functionfile)
-
 
 def get_trigger_tables(entities):
     """Determines which tables need to have triggers set on them.
