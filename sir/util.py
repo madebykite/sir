@@ -87,10 +87,10 @@ def db_session_ctx(Session):
 def get_requests_session():
     """ Configure a requests session for enforcing common retry strategy. """
     retry_strategy = Retry(
-        total=3,
+        total=config.CFG.getint("solr", "retries", fallback=3),
         status_forcelist=[429, 500, 502, 503, 504],
         allowed_methods=["HEAD", "GET", "OPTIONS"],
-        backoff_factor=1
+        backoff_factor=config.CFG.getint("solr", "backoff_factor", fallback=1),
     )
     adapter = HTTPAdapter(max_retries=retry_strategy)
     http = requests.Session()
